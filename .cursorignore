@@ -1,0 +1,6 @@
+/public/models/
+/node_modules/
+/dist/
+/.next/
+/graphify-out/
+/vendor/
