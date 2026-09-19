@@ -8,6 +8,7 @@ import draco from 'draco3dgltf';
 import {Matrix4,Vector3} from 'three';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {gzipSync} from 'node:zlib';
+import {writeModelFiles} from './write-model-files.mjs';
 const io=new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({'draco3d.decoder':await draco.createDecoderModule()});
 const old=JSON.parse(await readFile('public/models/manifest.json','utf8'));const oldByName=new Map(old.map(s=>[s.name.toLowerCase(),s]));
 const systems={skeletal:[],muscular:[],nervous:[],organs:[],ligaments:[]};
@@ -40,7 +41,7 @@ if(cardiac.length){const parts=cardiac.map(geometry),pos=[],index=[];for(const p
 const manifest=[];await mkdir('public/models',{recursive:true});
 for(const [system,items]of Object.entries(systems)){
  let offset=0;const chunks=[];for(const s of items){const p=Buffer.from(new Float32Array(s.pos).buffer),i=Buffer.from(new Uint32Array(s.index).buffer);s.offset=offset;s.vertices=s.pos.length/3;chunks.push(p);offset+=p.length;s.indexOffset=offset;s.indices=s.index.length;chunks.push(i);offset+=i.length;delete s.pos;delete s.index;manifest.push(s);}
- const data=Buffer.concat(chunks);await writeFile(`public/models/${system}.bin`,data);await writeFile(`public/models/${system}.mesh`,gzipSync(data,{level:9,mtime:0}));console.log(system,items.length,'structures',Math.round(data.length/1e6*100)/100,'MB raw;',Math.round(gzipSync(data).length/1e6*100)/100,'MB gzip');
+ const data=Buffer.concat(chunks);await writeModelFiles(system,data);console.log(system,items.length,'structures',Math.round(data.length/1e6*100)/100,'MB raw;',Math.round(gzipSync(data).length/1e6*100)/100,'MB gzip');
 }
 await writeFile('public/models/manifest.json',JSON.stringify(manifest));
 console.log('TOTAL',manifest.length);

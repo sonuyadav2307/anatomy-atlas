@@ -13,7 +13,7 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/verify-models.mjs",
+    "test": "node scripts/verify-models.mjs && node --test scripts/verify-selection.mjs",
     "preview:local": "node scripts/local-preview.mjs"
   },
   "dependencies": {

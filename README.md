@@ -4,7 +4,7 @@ A local 3D anatomy learning app built with React, TypeScript, Three.js, and Vine
 
 ## Start locally
 
-Requires Node.js 22.13 or newer and npm. From this project directory:
+Requires Node.js 22.13 or newer within the Node 22 release line, and npm. From this project directory:
 
 ```sh
 npm ci
@@ -36,7 +36,9 @@ npm run build
 
 - Select Skeletal, Muscular, Nervous, Organs, or Ligaments.
 - Drag to rotate; scroll/pinch to zoom; right-drag/two-finger drag to pan.
-- Click a structure or use Find a structure (Cmd/Ctrl+K).
+- Click a structure or use Find a structure (Cmd/Ctrl+K). Double-click a muscle to select it and focus the camera. Normal clicks stay on the visible muscle; Alt-click intentionally cycles nearby layers.
+- Use Hide muscle (or H while the model has keyboard focus) to temporarily remove a muscle and inspect the layers beneath it. Undo (U) restores the last hidden structure; Restore all restores every hidden structure. Search can also restore a hidden structure. Hidden states reset on reload and do not alter notes or studied progress.
+- Fascia coverings appear faintly so individual muscles remain visible and selectable; select a fascia by name to inspect it.
 - Isolate a structure, focus the camera, or restore the full body.
 - Adjust opacity and labels; display the skeleton as a reference for other systems.
 - Write personal notes and mark structures as studied.
@@ -47,7 +49,7 @@ Notes and progress are stored only in the current browser's localStorage. They d
 
 ## Anatomy assets and coverage
 
-Geometry is included locally. Systems load on demand and compressed meshes are decoded with the browser's DecompressionStream API; uncompressed fallback files support older browsers. WebGL is required for the 3D view. Search, summaries, notes, and quizzes remain available if WebGL cannot initialize.
+Geometry is included locally. Systems load on demand and compressed meshes are decoded with the browser's DecompressionStream API; uncompressed fallback chunks support older browsers. Each static model asset is below 25 MiB. WebGL is required for the 3D view. Search, summaries, notes, and quizzes remain available if WebGL cannot initialize.
 
 The atlas uses Z-Anatomy / BodyParts3D geometry and a single reference anatomy. It includes spinal-cord components and major peripheral nerves. Ligament coverage includes shoulder, elbow, wrist, hand, pelvis, and foot; knee ligament models are not included. Structure-specific learning summaries cover selected common anatomy. Other structures show clearly labeled system context.
 
@@ -58,6 +60,8 @@ These educational assets have not been clinically validated for diagnosis or pro
 ## Validation status
 
 - TypeScript check passed.
+- Individual muscle selection and dissection were verified in the existing browser: double-click focus, H to hide, selecting the exposed brachialis after hiding the biceps, multiple hidden muscles, Undo, Restore all, and search restoring a hidden muscle. No browser errors or warnings were recorded.
+- Five automated interaction tests cover stable surface selection, small muscles under faint fascia, duplicate ray hits, double-click targeting, and rejecting rotation/pan/pinch gestures as clicks.
 - Production build passed.
 - Browser checks passed for all five systems, structure isolation, cross-system search, correct/incorrect quiz feedback, and notes and studied progress surviving a reload. Test notes and studied marks were removed afterward.
 - Geometry integrity check passed for all 1,774 structures, including compressed data, bounds, and triangle indices (`npm test`). Source title cards are excluded from the anatomy catalog.
